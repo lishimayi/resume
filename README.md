@@ -20,11 +20,14 @@
 * <text style="color:#253144">有良好的编程习惯，较强的分析能力和解决问题的能力</text>
 * <text style="color:#253144">精通掌握Objective-C语言</text>
 * <text style="color:#253144">精通使用各种UI布局方式：Masonry、AutoLayout、Frame、StackView</text>
-* <text style="color:#253144">精通掌握代理，单例，KVO等设计模式</text>
-* <text style="color:#253144">熟练掌握GCD，NSOperationQueue，NSThread多线程编程技术</text>
+* <text style="color:#253144">精通掌握代理，单例，观察者，工厂等设计模式</text>
+* <text style="color:#253144">熟练掌握GCD，NSOperationQueue，NSThread，锁等多线程编程技术</text>
+* <text style="color:#253144">熟练掌握RunLoop，runtime</text>
+* <text style="color:#253144">熟练掌握iOS内存管理原理</text>
 * <text style="color:#253144">熟悉iOS逆向防护搭建</text>
 * <text style="color:#253144">熟练搭建iOS段组件化开发框架</text>
-* <text style="color:#253144">精通掌握项目打包上线流程</text>
+* <text style="color:#253144">熟练使用MVC，MVVM架构</text>
+* <text style="color:#253144">熟练掌握项目打包上线流程</text>
 * <text style="color:#253144">熟悉掌握网络协议</text>
 * <text style="color:#253144">熟练掌握苹果APNS消息推送机制</text>
 * <text style="color:#253144">精通掌握Block</text>
