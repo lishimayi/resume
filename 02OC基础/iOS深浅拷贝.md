@@ -1,0 +1,54 @@
+#iOS深拷贝（MutableCopy）与浅拷贝（Copy）的区别
+##深拷贝与浅拷贝的概念：（我的理解，望不吝赐教）
+* 浅拷贝：只copy一份对象的指针，指向对象的内存地址。
+* 深拷贝：拷贝对象到一块新的内存区域，然后吧新的对象的指针指向这块内存。
+
+iOS中并不是所有对象都支持`Copy`和`MutableCopy`，遵守`NSCopying`协议的类可以发送`Copy`消息，遵循`MutableCopying`协议的类可以发送`MutableCopy`消息。若未曾遵守该协议却发送相应消息会发生异常。
+遵守`NSCopying `协议必须实现`copyWithZone`方法,遵守`NSMutableCopying`协议必须实现`mutableCopyWithzone`方法。
+
+##可变对象和不可变对象分别调用Copy和MutableCopy方法的区别
+* 非容器类对象
+	* 调用`copy`和`mutableCopy`方法
+
+	```
+	NSString *originString = @"abc";
+	
+	NSString *copyStr = [originString copy];
+	NSString *mucpStr = [originString mutableCopy];
+	
+	NSLog(@"origStr : %p, %p",originString, &originString);
+	NSLog(@"copyStr : %p, %p",copyStr, &copyStr);
+	NSLog(@"mucpStr : %p, %p",mucpStr, &mucpStr);
+	NSLog(@"------------------------------------");
+	
+	NSMutableString *copyMstr = [originString copy];
+	//[copyMstr appendString:@"bb"];// 会直接crash
+	NSMutableString *mucpMstr = [originString mutableCopy];
+	NSLog(@"copyMstr : %p, %p",copyMstr, &copyMstr);
+	NSLog(@"mucpMstr : %p, %p",mucpMstr, &mucpMstr);
+	NSLog(@"--------mucpMstr--appended--------------------------");
+	[mucpMstr appendString:@"cc"];
+	NSLog(@"mucpMstr : %p, %p",mucpMstr, &mucpMstr);
+	
+	// log
+	origStr : 0x103bb0020, 0x7ffeec050288
+ 	copyStr : 0x103bb0020, 0x7ffeec050280
+	mucpStr : 0x600003626280, 0x7ffeec050278
+	------------------------------------
+	copyMstr : 0x103bb0020, 0x7ffeec050270
+	mucpMstr : 0x60000360e310, 0x7ffeec050268
+	--------mucpMstr--appended-----------
+	mucpMstr : 0x60000360e310, 0x7ffeec050268
+
+	```
+
+	可以得出
+	
+	* 对系统非容器类不可变对象进行`copy`结果只是复制了对象的引用，指向原地址。
+	* 对系统非容器类不可变对象进行`mutableCopy`结果是复制对象到一块新的内存，并把新的对象指针指向新的内存地址。
+	* 另外对于可变对象，`copy`结果是复制对象到一块新的内存，并把新的对象指针指向新的内存地址。copy过后的不可修改，否则crash（可以自行测试，未给出代码）
+	* 可变对象，`mutableCopy`结果是复制对象到一块新的内存，并把新的对象指针指向新的内存地址。
+
+* 系统容器类对象
+	
+	和非容器类一样
