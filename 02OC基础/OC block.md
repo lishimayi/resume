@@ -28,3 +28,14 @@
 
 __weak
 
+## __block内存管理
+
+* 当block在栈上的时候，并不会对__block 修饰的变量产生强引用
+* 当block从站上copy到堆上的时候，
+	* 会调用block内部的copy函数
+	* copy函数会内部调用_Block_object_assign函数
+	* _Block_object_assign会对__block变量形成强引用（retain）
+* 当block从堆中移除时
+	* 会调用block内部的dispose函数
+	* dispose函数内部会调用 _Block_object_dispose函数
+	* _Block_object_dispose函数会对__block变量释放操作（release）
