@@ -688,3 +688,8 @@ OC中方法的调用：`[object selector];`,其本质是让对象在运行时发
 
 可看到，我们在 - forwardInvocation: 方法里让Person对象去执行了fun函数。 
 
+
+## isa详解
+* 要想学习Runtime，首先要了解它底层的一些常用数据结构，比如isa指针
+* 在arm64架构之前，isa就是一个普通的指针 ，存储着Class、Meta-Class对象的内存地址
+* 从arm64架构开始 ，对isa进行了优化，变成了一个共用体 (union）结构，还使用位域来存储更多的信息
