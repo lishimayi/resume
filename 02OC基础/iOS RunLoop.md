@@ -127,7 +127,14 @@ iOS 中有两套 API 来访问和使用 Runloop：
 5.  程序中添加每 3 秒响应一次 NSTimer，当拖动 tableview 是 timer 可能无法响应要怎么解决？
 6.  Runloop 是怎么响应用户操作的，具体流程是什么样的？
 7.  说说 Runloop 的几种状态？
-8.  Runloop 的 Mode 作用是什么？
+ * kCFRunLoopEntry
+ * kCFRunLoopBeforeTimer
+ * kCFRunLoopBeforeSources
+ * kCFRunLoopBeforeWaiting
+ * kCFRunLoopAfterWaiting
+ * kCFRunLoopExit
+ * kCFRunLoopAllActivities
+9.  Runloop 的 Mode 作用是什么？
 
 # 附加信息
 
