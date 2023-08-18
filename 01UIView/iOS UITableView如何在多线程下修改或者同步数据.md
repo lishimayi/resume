@@ -22,3 +22,19 @@
 2. 串行队列中，同步执行；加载更多和删除数都完成后，转到主线程刷新UI。
 
 缺点：串行队列同步执行，如果删除或者加载更多都很耗时的话，整个过程就会很慢。
+
+## 重用机制
+* 重用池 ViewReusePool 
+## 数据源同步
+* 如何在tableview解决多线程情况下，数据处理
+    * 并发访问，数据拷贝
+    * 串行访问 
+
+## tableView的执行顺序
+
+1. 调用代理方法确定几个section：`numberOfSectionsInTableView:`
+2. 设置表头表尾高度（如果设置了header和footerVIew）`heightForHeaderInSection:`和`tableView:heightForFooterSection:`
+3. 设置section内cell数：`numberOfRowsInSection:`
+4. 设置cell：`cellForRowAtIndexPath:`
+5. 设置Cell高度：`heightForRowAtIndexPath:`
+6. cell将要显示在屏幕上：`willDisplayCell:forRowAtIndexPath:`
