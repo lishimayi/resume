@@ -1,10 +1,11 @@
-#iOS Runtime机制的详解
+# iOS Runtime机制的详解
 ## 前要
 将原代码转换为可执行程序需要3步：编译·链接·运行。不同的编译语言在这个三个步骤中锁进行的操作有所不同。
+
 ## 1. 什么是runtime
 Runtime是用C和汇编编写的用于实现OC动态语言机制的开源库。runtime简称运行时，就是系统在运行的时候一些机制。为我们提供了在程序在运行时动态创建和检查对象，修改类和对象的方法。
 
-##2. OC与runtime的交互层级
+## 2. OC与runtime的交互层级
 OC与runtime系统在三个层级上进行不同的交互。
 
 * runtime与OC的源代码交互。
@@ -12,16 +13,17 @@ OC与runtime系统在三个层级上进行不同的交互。
 * runtime的函数直接被调用。
 
 大部分时间开发者只需要专注于OC代码就可以，runtime系统自动在幕后运作。
-##3. 静态类型语言与动态类型语言
+
+## 3. 静态类型语言与动态类型语言
 * 静态类型语言：变量的数据类型在编译时就可以确定的语言，多数静态类型的语言要求在使用变量之前必须声明类型。C，C++，Java，C# 都属于静态类型语言。
 
 * 动态类型语言：变量的数据类型在运行时确定的语言，变量在使用之前不需要变量类型声明，通常的变量类型是被赋值的那个变量的类型。Python，ruby，OC，js这些都是动态类型的语言。
 
-##4.  C 和OC的函数调用对比
+## 4. C 和OC的函数调用对比
 * C函数的调用在编译的时候会决定会调用哪个函数，编译完之后直接顺序执行，无任何二义性。
 * OC函数的调用通过消息发送，编译时并不能决定真正调用哪个函数（在编译阶段OC可以调用任何函数，即使这个函数并未实现，只要声明过就不会报错，而C语言会报错），只有在真正运行的时候才会根据函数的名称找到具体对应函数来调用。
 
-##5. runtime的具体实现
+## 5. runtime的具体实现
 我们写得OC代码，在运行时候也是转换成了runtime方式运行的。更好的去了解runtime能够帮我们更深入的掌握OC语言。每一个OC方法，底层必然有一个与之对应的runtime方法。
 
 ```
@@ -30,7 +32,7 @@ OC与runtime系统在三个层级上进行不同的交互。
 // 在编译时，runtime会将上述代码转换成【发送消息】
 objc_msgSend(tableView, @selector(cellForRowAtIndexPath:),indexPath);
 ```
-##6. 常见runtime方法
+## 6. 常见runtime方法
 
 ### 获取属性列表
 
@@ -62,7 +64,7 @@ for (unsigned int i = 0; i < count; i++ ) {
 	NSLog(@"Ivar -----> %@",[NSString stringWithUFT8String:ivarName]);
 }
 ```
-###获取协议列表
+### 获取协议列表
 
 ```
 __unsafe_unretained Protocol **protocolList = class_copyProtocolList([self class], &count);
@@ -75,7 +77,7 @@ for (unsigned int i; i<count; i++)  {
 
 > 现在有一个Person类，和Person类创建的xiaoming对象，和test1 和test2方法。
 
-####获得类方法
+#### 获得类方法
 
 ```
 Class PersonClass = object_getClass([Person class]);
@@ -84,7 +86,7 @@ SEL oriSEL = @selectot(test1);
 Method oriMethod = class_getInstanceMethod([xiaoming Class], oriSEL);
 ```
 
-####获得实例方法
+#### 获得实例方法
 
 ```
 Class PersonClass = object_getClass([xiaoming class]);
@@ -92,24 +94,24 @@ SEL oriSEL = @selectot(test2);
 Method cusMethod = class_getInstanceMethod([xiaoming class], oriSEL);
 ```
 
-####添加方法
+#### 添加方法
 ```
 BOOL addsucc = class_addMethod(xiaomingClass, oriSEL, method_getImplementation(cusMethod), method_getTypeEncoding(cusMethod));
 ```
 
-####替换原方法实现
+#### 替换原方法实现
 
 ```
 class_replaceMethod(toolClaa, cusSEL, method_getImplementation(oriMethod), method_getTypeEncoding(oriMetod));
 ```
 
-####交换方法
+#### 交换方法
 
 ```
 method_exchangeImplementations(oriMethod, cusMethod);
 ```
 
-###7. 常规作用
+###  常规作用
 * 动态添加对象的成员变量和方法
 * 动态的交换两个方法的实现
 * 拦截替换方法
@@ -117,10 +119,10 @@ method_exchangeImplementations(oriMethod, cusMethod);
 * 实现NSCoding的自动归档和解档
 * 实现字典模型的自动转换
 
-###8.代码实现
+### 代码实现
 若要使用runtime，需要先引入头文件`import <objc/runtime.h>`
 
-####动态变量控制
+#### 动态变量控制
 在程序中xiaoming的age是10，后来被runtime修改成了20，看下怎么做到的。
 
 1. 动态获取xiaoming 类中的所有属性包括私有属性。
@@ -498,7 +500,7 @@ if ([value isKindOfClass:[NSArray class]]) {
 }
 ```
 
-### 7.集中参数概念
+## 7.集中参数概念
 以上集中方法应该算是runtime中在实际场景中应用的大部分情况了，平常编码差不多足够。
 如果从头到尾仔细阅读，相信你用法应该回了，虽然用是主要目的，有几个基本的参数概念还是要了解一下的，
 
@@ -522,13 +524,13 @@ if ([value isKindOfClass:[NSArray class]]) {
 
 其实，编译器会根据objc_msgSend, objc_msgSend_stret, objc_msgSendSuper或obc_msgSendSuper_strect 四个方法中选择一个调用，如果消息是传递超类，那么会调“super”函数，如果消息返回值是结构体而不是简单值，那么会调用名字带有"stret"的函数
 
-####2. SEL
+#### 2. SEL
 objec_msgSend函数第二个参数是SEL它是selector在Objc中的表示类型（Swift中是Selector类）。selector是方法选择器，可以理解为区分方法的 ID，而这个 ID 的数据结构是SEL:
 typedef struct objc_selector *SEL;
 其实它就是个映射到方法的C字符串，你可以用 Objc 编译器命令@selector()或者 Runtime 系统的sel_registerName函数来获得一个SEL类型的方法选择器。
 不同类中相同名字的方法所对应的方法选择器是相同的，即使方法名字相同而变量类型不同也会导致它们具有相同的方法选择器，于是 Objc 中方法命名有时会带上参数类型(NSNumber一堆抽象工厂方法)，Cocoa 中有好多长长的方法哦。
 
-####3. id
+#### 3. id
 
 objc_msgSend第一个参数类型为id，大家对它都不陌生，它是一个指向类实例的指针：
 typedef struct objc_object *id;
@@ -577,7 +579,7 @@ OC中方法的调用：`[object selector];`,其本质是让对象在运行时发
 1. `objc_msgSend(object. selector)`(不带参数)
 2. `objc_msgSend(object. selector, org1, org2, ...)`(带参数)
 
-####2. 运行时阶段：消息接受者`object` 寻找对应的`selector`
+#### 2. 运行时阶段：消息接受者`object` 寻找对应的`selector`
 
 1. 通过`object`的`isa 指针`找到`object`的`Class （类）`
 2. 在`Class （类）`的`cache （方法缓存）`的散列表中寻找对应的`IMP(方法实现）`
