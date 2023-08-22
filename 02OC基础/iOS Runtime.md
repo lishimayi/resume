@@ -1,38 +1,45 @@
 # iOS Runtime机制的详解
+
 ## 前要
-将原代码转换为可执行程序需要3步：编译·链接·运行。不同的编译语言在这个三个步骤中锁进行的操作有所不同。
 
-## 1. 什么是runtime
-Runtime是用C和汇编编写的用于实现OC动态语言机制的开源库。runtime简称运行时，就是系统在运行的时候一些机制。为我们提供了在程序在运行时动态创建和检查对象，修改类和对象的方法。
+将源代码转换为可执行程序需要3步：编译·链接·运行。不同的编译语言在这个三个步骤中锁进行的操作有所不同。
 
-## 2. OC与runtime的交互层级
-OC与runtime系统在三个层级上进行不同的交互。
+## 1. 什么是Runtime
 
-* runtime与OC的源代码交互。
-* runtime与Foundation框架的NSObject类定义的方法。
-* runtime的函数直接被调用。
+Runtime是用C和汇编编写的用于实现OC动态语言机制的开源库。Runtime简称运行时，就是系统在运行的时候一些机制。为我们提供了在程序在运行时动态创建和检查对象，修改类和对象的方法。
 
-大部分时间开发者只需要专注于OC代码就可以，runtime系统自动在幕后运作。
+## 2. OC与Runtime的交互层级
+
+OC与Runtime系统在三个层级上进行不同的交互。
+
+* Runtime与OC的源代码交互。
+* Runtime与Foundation框架的NSObject类定义的方法。
+* Runtime的函数直接被调用。
+
+大部分时间开发者只需要专注于OC代码就可以，Runtime系统自动在幕后运作。
 
 ## 3. 静态类型语言与动态类型语言
-* 静态类型语言：变量的数据类型在编译时就可以确定的语言，多数静态类型的语言要求在使用变量之前必须声明类型。C，C++，Java，C# 都属于静态类型语言。
 
+* 静态类型语言：变量的数据类型在编译时就可以确定的语言，多数静态类型的语言要求在使用变量之前必须声明类型。C，C++，Java，C# 都属于静态类型语言。
 * 动态类型语言：变量的数据类型在运行时确定的语言，变量在使用之前不需要变量类型声明，通常的变量类型是被赋值的那个变量的类型。Python，ruby，OC，js这些都是动态类型的语言。
 
 ## 4. C 和OC的函数调用对比
+
 * C函数的调用在编译的时候会决定会调用哪个函数，编译完之后直接顺序执行，无任何二义性。
 * OC函数的调用通过消息发送，编译时并不能决定真正调用哪个函数（在编译阶段OC可以调用任何函数，即使这个函数并未实现，只要声明过就不会报错，而C语言会报错），只有在真正运行的时候才会根据函数的名称找到具体对应函数来调用。
 
-## 5. runtime的具体实现
-我们写得OC代码，在运行时候也是转换成了runtime方式运行的。更好的去了解runtime能够帮我们更深入的掌握OC语言。每一个OC方法，底层必然有一个与之对应的runtime方法。
+## 5. Runtime的具体实现
+
+我们写得OC代码，在运行时候也是转换成了Runtime方式运行的。更好的去了解Runtime能够帮我们更深入的掌握OC语言。每一个OC方法，底层必然有一个与之对应的Runtime方法。
 
 ```
 // 当我们写下这样的代码
 [tableView cellForRowAtIndexPath:indexPath];
-// 在编译时，runtime会将上述代码转换成【发送消息】
+// 在编译时，Runtime会将上述代码转换成【发送消息】
 objc_msgSend(tableView, @selector(cellForRowAtIndexPath:),indexPath);
 ```
-## 6. 常见runtime方法
+
+## 6. 常见Runtime方法
 
 ### 获取属性列表
 
@@ -54,6 +61,7 @@ for (unsigned int i = 0; i < count; i++ ) {
 	NSLog(@"method ----->%@",NSStringFromSelector(method_getName(method)));
 }
 ```
+
 ### 获取成员变量列表 
 
 ```
@@ -64,6 +72,7 @@ for (unsigned int i = 0; i < count; i++ ) {
 	NSLog(@"Ivar -----> %@",[NSString stringWithUFT8String:ivarName]);
 }
 ```
+
 ### 获取协议列表
 
 ```
@@ -95,6 +104,7 @@ Method cusMethod = class_getInstanceMethod([xiaoming class], oriSEL);
 ```
 
 #### 添加方法
+
 ```
 BOOL addsucc = class_addMethod(xiaomingClass, oriSEL, method_getImplementation(cusMethod), method_getTypeEncoding(cusMethod));
 ```
@@ -120,10 +130,12 @@ method_exchangeImplementations(oriMethod, cusMethod);
 * 实现字典模型的自动转换
 
 ### 代码实现
-若要使用runtime，需要先引入头文件`import <objc/runtime.h>`
+
+若要使用Runtime，需要先引入头文件`import <objc/Runtime.h>`
 
 #### 动态变量控制
-在程序中xiaoming的age是10，后来被runtime修改成了20，看下怎么做到的。
+
+在程序中xiaoming的age是10，后来被Runtime修改成了20，看下怎么做到的。
 
 1. 动态获取xiaoming 类中的所有属性包括私有属性。
 	
@@ -153,10 +165,10 @@ method_exchangeImplementations(oriMethod, cusMethod);
 }
 ```
 #### 动态添加方法
+
 在程序中假设XiaoMing没有guess方法，后来被Runtime添加了一个叫guess的方法，最终在调用guess方法做出响应。那么Runtime如何做到的呢？
 
 * 动态给XiaoMing类中添加guess方法：
-
 ```
 /*
  * (IMP)guessAnswer 意思是guessAnswer的地址指针
@@ -318,10 +330,10 @@ load方法会在类第一次加载的时候调用，调用的时间比较靠前�
 @end
 
 // 如果你有100 个属性每个都写一遍岂不是很烦
-// 有了runtime 我们可以简单实现
+// 有了Runtime 我们可以简单实现
 //.m
 #import "Movie.h"
-#import <objc/runtime.h>
+#import <objc/Runtime.h>
 
 @implementation Movie 
 
@@ -371,7 +383,7 @@ load方法会在类第一次加载的时候调用，调用的时间比较靠前�
 ```
 // 我们把encodeWithCoder和initWithCoder 这两个方法抽成宏
 #import "Movie.h"
-#import "objc/runtime.h"
+#import "objc/Runtime.h"
 
 #define encodeRuntime(A)\
 \
@@ -416,7 +428,7 @@ return self;\
 // 这样我们吧两个单独放到文件里面，以后需要持久化数据模型就只调用这两个宏
 ```
 
-####实现字典和模型的自动转换
+#### 实现字典和模型的自动转换
 
 字典转模型的应用可以说是每个APP都需要使用的场景，虽然方式策略各有不同，但是原理都是一致的，遍历模型中的所有属性，根据模型的属性名去字典中查找key，取出对应的值给模型属性赋值。例如：JSONModel，MJExtension都是通过这种方式。
 
@@ -501,10 +513,12 @@ if ([value isKindOfClass:[NSArray class]]) {
 ```
 
 ## 7.集中参数概念
-以上集中方法应该算是runtime中在实际场景中应用的大部分情况了，平常编码差不多足够。
-如果从头到尾仔细阅读，相信你用法应该回了，虽然用是主要目的，有几个基本的参数概念还是要了解一下的，
+
+以上集中方法应该算是Runtime中在实际场景中应用的大部分情况了，平常编码差不多足够。
+如果从头到尾仔细阅读，相信你用法应该会了，虽然用是主要目的，有几个基本的参数概念还是要了解一下的，
 
 #### 1.objec_msgSend
+
 ```
 /* Basic Messaging Primitives
  * On some architectures, use objc_msgSend_stret for some struct return types.
@@ -567,12 +581,12 @@ struct objc_class {
 可以看到运行时一个类还关联了它的超类指针，类名，成员变量，方法，缓存，还有附属的协议。
 在objc_class结构体中：ivars是objc_ivar_list指针；methodLists是指向objc_method_list指针的指针。也就是说可以动态修改 *methodLists的值来添加成员方法，这也是Category实现的原理.
 
-## 9.消息机制的基本原理
+## 8.消息机制的基本原理
 
-###前要
+### 前要
 OC中方法的调用：`[object selector];`,其本质是让对象在运行时发送消息的过程。
 
-###我们来看看[object selector]; 在`编译阶段`和`运行阶段`分别做了什么？
+### 我们来看看[object selector]; 在`编译阶段`和`运行阶段`分别做了什么？
 
 #### 1. 编译阶段：`[object selector];`方法被编译器转换为：
 
@@ -629,7 +643,7 @@ OC中方法的调用：`[object selector];`,其本质是让对象在运行时发
 
 ```
 #import "ViewController.h"
-#include "objc/runtime.h"
+#include "objc/Runtime.h"
 
 @interface Person : NSObject
 
@@ -691,7 +705,13 @@ OC中方法的调用：`[object selector];`,其本质是让对象在运行时发
 可看到，我们在 - forwardInvocation: 方法里让Person对象去执行了fun函数。 
 
 
-## isa详解
+## 9. isa详解
+
 * 要想学习Runtime，首先要了解它底层的一些常用数据结构，比如isa指针
 * 在arm64架构之前，isa就是一个普通的指针 ，存储着Class、Meta-Class对象的内存地址
 * 从arm64架构开始 ，对isa进行了优化，变成了一个共用体 (union）结构，还使用位域来存储更多的信息
+
+## 10. 面试题：
+ 
+* `isKindOfClass:` 和 `isMemberOfClass:` 这两个方法有什么区别？
+
