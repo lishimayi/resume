@@ -19,7 +19,7 @@ iOS中当我们定义属性`@property`的时候，就需要属性修饰符，
 //MRC：nonatomic,atomic,retain,assign,copy,readwrite,readonly
 //ARC：nonatomic,atomic,strong,weak,assign,copy,readwrite,readonly
 ```
-###什么影响retainCount计数
+### 什么影响retainCount计数
 ```
 1. alloc方法是为了对象分配内存，retaincount 为1
 2. retainCount ：引用计数，下面简称计数
@@ -28,7 +28,7 @@ iOS中当我们定义属性`@property`的时候，就需要属性修饰符，
 5. copy 一个对象会变成一个新的对象，这个对象的计数为1，原有的对象计数不变。 
 ```
 不管MRC还是ARC，对象的释放都依据`reference count`是否为0,
-###修饰符详述
+### 修饰符详述
 
 * copy：
 	1.  一般用于修饰不可变容易的属性（NSArray,NSDictionary,NSString,block）
