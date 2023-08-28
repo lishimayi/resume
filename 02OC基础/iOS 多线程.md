@@ -1,27 +1,38 @@
-# 一、iOS多线程（三种方式，以及优缺点）
+# 一、iOS 多线程
+
+## 常用的几个线程对比
+
+| 技术方案  | 简介  | 语言 |线程生命周期|使用频率|
+|:------------- |:---------------|:-------------:|:-------------:|:-------------:|
+| Pthread     |  一套通用的多线程API <br>  适用于unix、Linux，window等系统<br> 跨平台可移植<br> 使用难度大 |        C |程序员管理|几乎不使用|
+| NSThread   |    使用更加面向对象 <br>  简单易用，可直接操作线程对象     | OC |程序员管理|偶尔使用|
+|GCD | 目的是为了替代NSThread等线程技术<br>充分利用设备多核  |    C |自动管理|经常使用|
+|NSOpertation| 基于GCD（底层是GCD）<br> 比GCD更多了一些简单实用的功能<br>使用更加面向对象。|OC|自动管理|经常使用|其实
+
+
 
 ## NSThread
 
-### 简介
+### 前言
 
-> NSThread是苹果官方提供面向对象操作线程的最轻量级技术，简单方便，可以直接操作线程对象。
-> 
+> NSThread 是苹果官方提供面向对象操作线程的最轻量级技术，简单方便，可以直接操作线程对象。
+>
 > 不过需要自己控制线程的生命周期；手动管理线程同步；线程加锁等。
-> 
+>
 > 开销较大
-> 
+>
 > 最常用到的就是 `[NSThread currentThread]`获取当前线程。
 
-### NSThread提供的接口
+### NSThread 提供的接口
 
-* `@property (class, readonly, strong) NSThread *currentThread;` : 当前线程的属性
-* `+ (void)detachNewThreadWithBlock:(void (^)(void))block;` : block形式创建一个线程，并在block中设置这个线程中需要执行的任务。
-* `+ (void)detachNewThreadSelector:(SEL)selector toTarget:(id)target withObject:(nullable id)argument;`：选择器的形式实现开启线程执行任务
-* `BOOL isMulti = [NSThread isMultiThreaded];`  ： 当前app是否是多线程，（暂时不明确，官方文档没没看懂）
-* `@property(readonly, retain) NSMutableDictionary *threadDictionary;`
+- `@property (class, readonly, strong) NSThread *currentThread;` : 当前线程的属性
+- `+ (void)detachNewThreadWithBlock:(void (^)(void))block;` : block 形式创建一个线程，并在 block 中设置这个线程中需要执行的任务。
+- `+ (void)detachNewThreadSelector:(SEL)selector toTarget:(id)target withObject:(nullable id)argument;`：选择器的形式实现开启线程执行任务
+- `BOOL isMulti = [NSThread isMultiThreaded];` ： 当前 app 是否是多线程，（暂时不明确，官方文档没没看懂）
+- `@property(readonly, retain) NSMutableDictionary *threadDictionary;`
 
 ```
-Summary 
+Summary
 The thread object's dictionary.
 
 Declaration
@@ -29,12 +40,12 @@ Declaration
 
 Discussion
 You can use the returned dictionary to store thread-specific data.
-The thread dictionary is not used during any manipulations of the NSThread object—it is simply a place where you can store any interesting data. 
-For example, Foundation uses it to store the thread’s default NSConnection and NSAssertionHandler instances. 
+The thread dictionary is not used during any manipulations of the NSThread object—it is simply a place where you can store any interesting data.
+For example, Foundation uses it to store the thread’s default NSConnection and NSAssertionHandler instances.
 You may define your own keys for the dictionary.
 ```
 
-*  `+ (void)sleepUntilDate:(NSDate *)date;` ：阻塞线程直到指定时间点
+- `+ (void)sleepUntilDate:(NSDate *)date;` ：阻塞线程直到指定时间点
 
 ```
 Summary
@@ -45,14 +56,14 @@ Discussion
 No run loop processing occurs while the thread is blocked.
 Parameters
 
-aDate	
+aDate
 The time at which to resume processing.
 
 ```
 
-* `+ (void)sleepForTimeInterval:(NSTimeInterval)ti;`：阻塞线程一段时间
-* `+ (void)exit;`：退出当前线程
-* 后面的接口
+- `+ (void)sleepForTimeInterval:(NSTimeInterval)ti;`：阻塞线程一段时间
+- `+ (void)exit;`：退出当前线程
+- 后面的接口
 
 ```
 + (double)threadPriority;
@@ -107,24 +118,24 @@ FOUNDATION_EXPORT NSNotificationName const NSThreadWillExitNotification;
 @end
 ```
 
-* 优点：比其他两个更轻量级。
-* 缺点：需要自己管理线程的生命周期，线程同步。线程同步对数据的加锁会有一定的开销。
+- 优点：比其他两个更轻量级。
+- 缺点：需要自己管理线程的生命周期，线程同步。线程同步对数据的加锁会有一定的开销。
 
-## Coca operation
+## NSOperation
 
-* 优点：不需要关心线程管理，数据同步的事情，可以把精力放在自己需要的执行操作上。Cocoa operation 相关的类：NSOperation，NSOperationQueue。NSOperation是个抽象类，使用它必须使用它的子类，可以实现它或者使用它定义好的两个子类：NSInvocationOperation和NSBlockOperation。创建NSOperation子类对象，把对象添加到NSOperationQueue队列里执行。
+- 优点：不需要关心线程管理，数据同步的事情，可以把精力放在自己需要的执行操作上。Cocoa operation 相关的类：NSOperation，NSOperationQueue。NSOperation 是个抽象类，使用它必须使用它的子类，可以实现它或者使用它定义好的两个子类：NSInvocationOperation 和 NSBlockOperation。创建 NSOperation 子类对象，把对象添加到 NSOperationQueue 队列里执行。
 
 ## GCD
 
-* 优点：Apple开发多核编程解决方法。
+- 优点：Apple 开发多核编程解决方法。
 
-# 二、iOS与多线程（八）
+# 二、iOS 与多线程（八）
 
 https://www.jianshu.com/p/580050bbfc91
 
 ### 前言
 
-> 信号量机制是多线程通信中比较重要的一部分，对于NSOperation可以设置并发数，但是对于GCD就不能设置并发数，那么就只能靠信号量机制了。
+> 信号量机制是多线程通信中比较重要的一部分，对于 NSOperation 可以设置并发数，但是对于 GCD 就不能设置并发数，那么就只能靠信号量机制了。
 
 ### 线程与进程
 
@@ -134,15 +145,37 @@ https://www.jianshu.com/p/580050bbfc91
 
 ### 2. 线程
 
-1个进程想要执行任务，必须得有线程，每1个进程至少有一条线程，这个线程称为主线程。一个进程（程序）的所有任务都在线程中执行。
+1 个进程想要执行任务，必须得有线程，每 1 个进程至少有一条线程，这个线程称为主线程。一个进程（程序）的所有任务都在线程中执行。
 
 也可以这样理解：线程就是进程的一个执行单元，是进程内科调度实体。比进程更小的独立运行的基本单位。线程也被称为轻量级的进程
 
 一个程序至少一个进程，一个进程至少一个线程。
 
-线程的串行：1个线程中任务的执行是串行的。如果要在一个线程中执行多个任务，那么只能一个一个地按顺序执行这些任务。也就是说，在同一时间内，一个线程只能执行一个任务。
+线程的串行：1 个线程中任务的执行是串行的。如果要在一个线程中执行多个任务，那么只能一个一个地按顺序执行这些任务。也就是说，在同一时间内，一个线程只能执行一个任务。
 
 ### 3.线程与进程的区别
 
-* 地址空间：统一进程的线程共享本进程的地址空间，而进程之间则是独立的地址空间。
-* 资源拥有：同一进程内的线程共享本进程的资源如内存，I/O,CPU等。但是进程之间的资源是独立的。一个进程崩溃后，在保护模式下不会对其他进程产生影响
+- 地址空间：统一进程的线程共享本进程的地址空间，而进程之间则是独立的地址空间。
+- 资源拥有：同一进程内的线程共享本进程的资源如内存，I/O,CPU 等。但是进程之间的资源是独立的。一个进程崩溃后，在保护模式下不会对其他进程产生影响
+
+## 面试题
+
+### 你理解的多线程是什么？
+
+### iOS的多线程方案有哪几种？你更倾向于哪种？
+
+### 你项目中有没有用过GCD
+
+### GCD队列的类型
+
+### GCD和operrationQueue的区别，以及各自的优势
+
+### 线程安全的处理手段有哪些？
+
+### OC你了解的锁有哪些？
+
+### 追问1：自旋锁和互斥锁的对比？
+
+### 追问2：使用以上锁应注意哪些？
+
+### 追问3：用C/C++/OC 任选其一实现自旋锁和互斥锁？口述即可！
