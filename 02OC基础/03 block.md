@@ -26,7 +26,7 @@
   - stackBlock, 会变成 mallocBlock
   - globalBlock, 还是 globalBlock
 - block 作为返回值
-  - 使用了局部变量就会被 cpoy 到堆上(因为被强引用了)
+  - 使用了局部变量就会被 copy 到堆上(因为被强引用了)
   - 未使用局部变量就还是 globalBlock
 - 被强引用或者 Copy 修饰
 - 系统 API 包含 usingBlock
