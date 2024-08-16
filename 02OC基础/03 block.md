@@ -17,15 +17,15 @@
 ### 什么情况下会触发 block 的 copy
 
 - 手动调用copy时：
-  - mallocBlock ： 未触发copy
-  - stackBlock, 会变成 mallocBlock： 触发copy
-  - globalBlock, 还是 globalBlock：未触发copy
+  - mallocBlock ：已经在堆区, 未触发copy
+  - stackBlock: 会变成 mallocBlock, 触发copy
+  - globalBlock: 还是 globalBlock, 未触发copy
 - block 作为返回值
-  - 使用了局部变量就会被 copy 到堆上(因为被强引用了)
-  - 未使用局部变量就还是 globalBlock
+  - mallocBlock: 已经在堆区, 未触发copy
+  - stackBlock: 会被 copy 到堆上(因为被强引用了), 触发copy
+  - globalBlock: 还是 globalBlock, 未触发copy
 - 被强引用或者 Copy 修饰
-- 系统 API 包含 usingBlock
-  - globalblock
+  - 与是否被强引用以及是否copy修饰符无关，主要看他自己是什么内存区域的Block
 
 ### block 的变量捕获机制
 
